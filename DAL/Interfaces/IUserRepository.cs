@@ -14,6 +14,8 @@ namespace DAL.Interfaces
 
         public UserModel? GetById(int id);
 
+        public UserModel? GetByEmail(string email);
+
         public UserModel? Create(UserModel user);
 
         public bool Delete(int id);

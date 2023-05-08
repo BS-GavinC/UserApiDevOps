@@ -40,7 +40,7 @@ namespace APIUserDevOps.Controllers
 
         }
 
-        [HttpPost]
+        [HttpPost("register")]
         public ActionResult<UserDto> Create(CreateUserForm createForm)
         {
             if (!ModelState.IsValid)
@@ -73,6 +73,11 @@ namespace APIUserDevOps.Controllers
         [HttpPatch]
         public IActionResult ChangePassword(int id, ChangePasswordForm changePwdForm)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
             if (_userService.ChangePassword(id, changePwdForm.Password))
             {
                 return NoContent();
@@ -80,5 +85,28 @@ namespace APIUserDevOps.Controllers
 
             return BadRequest();
         }
+
+        [HttpPost("login")]
+        public IActionResult Login(LoginUserForm loginForm)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            int? userId = _userService.Login(loginForm.Email, loginForm.Password);
+
+            if(userId is null)
+            {
+                return Problem(
+                    detail: "Credential invalide",
+                    statusCode: 400
+                );
+            }
+
+            // TODO Change this to use JWT ;)
+            return Ok(userId);
+        }
+
     }
 }

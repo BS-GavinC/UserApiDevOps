@@ -20,5 +20,6 @@ namespace BLL.Interfaces
 
         public bool ChangePassword(int id, string password);
 
+        public int? Login(string email,  string password);
     }
 }

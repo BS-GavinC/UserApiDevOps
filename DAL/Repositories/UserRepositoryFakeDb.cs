@@ -13,7 +13,7 @@ namespace DAL.Repositories
     {
         public bool ChangePassword(int id, string password)
         {
-            UserModel? user = FakeDb.Users.FirstOrDefault(x => x?.Id == id, null);
+            UserModel? user = FakeDb.Users.FirstOrDefault(u => u.Id == id);
 
             if (user is null)
             {
@@ -33,7 +33,7 @@ namespace DAL.Repositories
 
         public bool Delete(int id)
         {
-            UserModel? user = FakeDb.Users.FirstOrDefault(x => x?.Id == id, null);
+            UserModel? user = FakeDb.Users.FirstOrDefault(u => u.Id == id);
 
             if (user is null)
             {
@@ -51,9 +51,14 @@ namespace DAL.Repositories
             return FakeDb.Users;
         }
 
+        public UserModel? GetByEmail(string email)
+        {
+            return FakeDb.Users.SingleOrDefault(user => user.Email == email);
+        }
+
         public UserModel? GetById(int id)
         {
-            return FakeDb.Users.SingleOrDefault(x => x?.Id == id, null);
+            return FakeDb.Users.SingleOrDefault(user => user.Id == id);
         }
 
 
