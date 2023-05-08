@@ -27,6 +27,8 @@ namespace DAL.Repositories
 
         public UserModel? Create(UserModel user)
         {
+            user.Id = FakeDb.NewId++;
+
             FakeDb.Users.Add(user);
             return user;
         }

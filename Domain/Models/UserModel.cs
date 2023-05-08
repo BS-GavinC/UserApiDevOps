@@ -8,24 +8,20 @@ namespace Domain.Models
 {
     public class UserModel
     {
-
-        private static int _id = 0;
-
-        private static int NewId { get
-            {
-                _id++;
-                return _id; 
-            }
-        }
-
         public UserModel(string firstname, string lastname, string email, string password, DateTime birthdate)
         {
-            Id = NewId;
+            Id = -1;
             Firstname = firstname;
             Lastname = lastname;
             Email = email;
             Password = password;
             Birthdate = birthdate;
+        }
+
+        public UserModel(int id, string firstname, string lastname, string email, string password, DateTime birthdate)
+            :this(firstname, lastname, email, password, birthdate)
+        {
+            Id = id;
         }
 
         public int Id { get; set; }
