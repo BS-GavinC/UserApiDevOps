@@ -21,13 +21,18 @@ namespace APIUserDevOps.Controllers
         }
 
         [HttpGet]
+        [Produces("application/json")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<UserDto>))]
         public ActionResult<IEnumerable<UserDto>> GetAll()
         {
             return Ok(_userService.GetAll().ToUserDtoList());
         }
 
         [HttpGet("{id:int}")]
-        public ActionResult<UserDto> GetById(int id)
+        [Produces("application/json")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserDto))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult<UserDto> GetById([FromRoute] int id)
         {
             UserModel? model = _userService.GetById(id);
 
@@ -37,11 +42,14 @@ namespace APIUserDevOps.Controllers
             }
 
             return Ok(model.ToUserDTO());
-
         }
 
         [HttpPost("register")]
-        public ActionResult<UserDto> Create(CreateUserForm createForm)
+        [Produces("application/json")]
+        [Consumes("application/json")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserDto))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public ActionResult<UserDto> Create([FromBody] CreateUserForm createForm)
         {
             if (!ModelState.IsValid)
             {
@@ -52,15 +60,13 @@ namespace APIUserDevOps.Controllers
 
             if (user == null) return BadRequest();
 
-
-
             return Created($"/api/user/{user.Id}", user);
-
-
         }
 
         [HttpDelete("{id:int}")]
-        public IActionResult Delete(int id)
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public IActionResult Delete([FromRoute] int id)
         {
             if (_userService.Delete(id))
             {
@@ -71,7 +77,10 @@ namespace APIUserDevOps.Controllers
         }
 
         [HttpPatch]
-        public IActionResult ChangePassword(int id, ChangePasswordForm changePwdForm)
+        [Consumes("application/json")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public IActionResult ChangePassword([FromRoute] int id, [FromBody] ChangePasswordForm changePwdForm)
         {
             if (!ModelState.IsValid)
             {
@@ -87,7 +96,10 @@ namespace APIUserDevOps.Controllers
         }
 
         [HttpPost("login")]
-        public IActionResult Login(LoginUserForm loginForm)
+        [Consumes("application/json")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(int))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public IActionResult Login([FromBody] LoginUserForm loginForm)
         {
             if (!ModelState.IsValid)
             {
