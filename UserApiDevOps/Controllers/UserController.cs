@@ -21,7 +21,7 @@ namespace APIUserDevOps.Controllers
         }
 
         [HttpGet]
-        public ActionResult<List<UserDto>> GetAll()
+        public ActionResult<IEnumerable<UserDto>> GetAll()
         {
             return Ok(_userService.GetAll().ToUserDtoList());
         }
@@ -56,7 +56,7 @@ namespace APIUserDevOps.Controllers
 
             return Created($"/api/user/{user.Id}", user);
 
-            
+
         }
 
         [HttpDelete("{id:int}")]
@@ -96,7 +96,7 @@ namespace APIUserDevOps.Controllers
 
             int? userId = _userService.Login(loginForm.Email, loginForm.Password);
 
-            if(userId is null)
+            if (userId is null)
             {
                 return Problem(
                     detail: "Credential invalide",

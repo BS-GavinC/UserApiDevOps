@@ -48,7 +48,7 @@ namespace DAL.Repositories
 
         }
 
-        public List<UserModel> GetAll()
+        public IEnumerable<UserModel> GetAll()
         {
             return FakeDb.Users;
         }

@@ -56,7 +56,7 @@ namespace BLL.Services
             return _userRepository.Delete(id);
         }
 
-        public List<UserModel> GetAll()
+        public IEnumerable<UserModel> GetAll()
         {
             return _userRepository.GetAll();
         }

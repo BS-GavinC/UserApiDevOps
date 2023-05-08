@@ -24,17 +24,12 @@ namespace Domain.Mappers
                 );
         }
 
-        public static List<UserDto> ToUserDtoList(this IEnumerable<UserModel> models)
+        public static IEnumerable<UserDto> ToUserDtoList(this IEnumerable<UserModel> models)
         {
-            List<UserDto> result = new List<UserDto>();
-
             foreach (var model in models)
             {
-                result.Add(model.ToUserDTO());
+                yield return model.ToUserDTO();
             }
-
-            return result;
-
         }
 
         public static UserModel ToUserModel(this CreateUserForm createForm)

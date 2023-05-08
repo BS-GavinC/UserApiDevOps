@@ -10,7 +10,7 @@ namespace DAL.Interfaces
     public interface IUserRepository
     {
 
-        public List<UserModel> GetAll();
+        public IEnumerable<UserModel> GetAll();
 
         public UserModel? GetById(int id);
 
