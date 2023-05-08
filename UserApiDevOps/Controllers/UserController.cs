@@ -48,7 +48,7 @@ namespace APIUserDevOps.Controllers
                 return BadRequest();
             }
 
-            UserModel? user = _userService.Create(createForm.ToUserModel());
+            UserDto? user = _userService.Create(createForm.ToUserModel())?.ToUserDTO();
 
             if (user == null) return BadRequest();
 
