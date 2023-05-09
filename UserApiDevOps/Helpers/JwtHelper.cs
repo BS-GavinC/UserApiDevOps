@@ -32,7 +32,8 @@ namespace APIUserDevOps.Helpers
             Claim[] claims =
             {
                 new Claim(ClaimTypes.NameIdentifier, userModel.Id.ToString()),
-                new Claim(ClaimTypes.Email, userModel.Email)
+                new Claim(ClaimTypes.Email, userModel.Email),
+                new Claim(ClaimTypes.Role, userModel.IsAdmin ? "Admin" : "User")
             };
 
             // Création du token de securité (JWT)

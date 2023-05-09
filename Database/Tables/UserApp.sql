@@ -5,7 +5,8 @@
 	[Lastname] NVARCHAR(50) NOT NULL,
 	[Email] NVARCHAR(200) NOT NULL,
 	[Birthdate] DATE NOT NULL,
-	[Password_Hash] VARCHAR(100) NOT NULL, 
+	[Password_Hash] VARCHAR(100) NOT NULL,
+	[IsAdmin] BIT NOT NULL DEFAULT 0,
 
 	CONSTRAINT PK_UserApp PRIMARY KEY ([User_Id]),
 	CONSTRAINT UK_UserApp__Email UNIQUE([Email])

@@ -26,7 +26,8 @@ namespace DAL.Repositories
                 (string)record["Lastname"],
                 (string)record["Email"],
                 (string)record["Password_Hash"],
-                (DateTime)record["Birthdate"]
+                (DateTime)record["Birthdate"],
+                (bool)record["IsAdmin"]
             );
         }
 

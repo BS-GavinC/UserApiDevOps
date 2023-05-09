@@ -16,12 +16,14 @@ namespace Domain.Models
             Email = email;
             Password = password;
             Birthdate = birthdate;
+            IsAdmin = false;
         }
 
-        public UserModel(int id, string firstname, string lastname, string email, string password, DateTime birthdate)
+        public UserModel(int id, string firstname, string lastname, string email, string password, DateTime birthdate, bool isAdmin)
             :this(firstname, lastname, email, password, birthdate)
         {
             Id = id;
+            IsAdmin = isAdmin;
         }
 
         public int Id { get; set; }
@@ -35,6 +37,8 @@ namespace Domain.Models
         public string Password { get; set; }
 
         public DateTime Birthdate { get; set; }
+        
+        public bool IsAdmin { get; set; }
 
     }
 }
