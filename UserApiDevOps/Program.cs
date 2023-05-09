@@ -1,5 +1,6 @@
 
 
+using APIUserDevOps.Helpers;
 using BLL.Interfaces;
 using BLL.Services;
 using DAL.Interfaces;
@@ -12,12 +13,16 @@ var builder = WebApplication.CreateBuilder(args);
 
 
 // Add services to the container.
+// - DAL
 builder.Services.AddTransient<IDbConnection, SqlConnection>((service) => {
     string connectionString = builder.Configuration.GetConnectionString("Default");
     return new SqlConnection(connectionString);
 });
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+// - BLL
 builder.Services.AddScoped<IUserService, UserService>();
+// - API Helper
+builder.Services.AddSingleton<JwtHelper>();
 
 
 builder.Services.AddControllers();

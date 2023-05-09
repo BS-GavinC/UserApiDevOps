@@ -1,4 +1,6 @@
-﻿using BLL.Interfaces;
+﻿using APIUserDevOps.Helpers;
+using BLL.Interfaces;
+using Domain.DTO.Jwt;
 using Domain.DTO.User;
 using Domain.Forms.User;
 using Domain.Mappers;
@@ -14,10 +16,12 @@ namespace APIUserDevOps.Controllers
     {
 
         private readonly IUserService _userService;
+        private readonly JwtHelper _JwtHelper;
 
-        public UserController(IUserService userService)
+        public UserController(IUserService userService, JwtHelper jwtHelper)
         {
             _userService = userService;
+            _JwtHelper = jwtHelper;
         }
 
         [HttpGet]
@@ -97,7 +101,7 @@ namespace APIUserDevOps.Controllers
 
         [HttpPost("login")]
         [Consumes("application/json")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(int))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(JwtDto))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public IActionResult Login([FromBody] LoginUserForm loginForm)
         {
@@ -116,8 +120,16 @@ namespace APIUserDevOps.Controllers
                 );
             }
 
-            // TODO Change this to use JWT ;)
-            return Ok(userId);
+            UserModel? userModel = _userService.GetById((int) userId);
+
+            if (userModel is null)
+            {
+                return Problem(statusCode: StatusCodes.Status500InternalServerError);
+            }
+            string token = _JwtHelper.CreateToken(userModel);
+
+            // Envoi d'un JWT avec les informations de l'utilisateur
+            return Ok(new JwtDto() { Token = token });
         }
 
     }
