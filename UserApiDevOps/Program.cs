@@ -5,12 +5,14 @@ using BLL.Interfaces;
 using BLL.Services;
 using DAL.Interfaces;
 using DAL.Repositories;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Data.SqlClient;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Data;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
-
 
 
 // Add services to the container.
@@ -28,6 +30,35 @@ builder.Services.AddSingleton<JwtHelper>();
 
 // Ajout des controllers de l'API
 builder.Services.AddControllers();
+
+// Ajout de la configuration pour l'authentification
+builder.Services
+    // - Active le Jwt Bearer
+    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    // - Configuration du check du JWT
+    .AddJwtBearer(options =>
+    {
+        // Sauvegarde du token si celui-ci est valide
+        options.SaveToken = true;
+
+        // Parametre à validé dans le token
+        options.TokenValidationParameters = new TokenValidationParameters()
+        {
+            // Issuer
+            ValidateIssuer = true,
+            ValidIssuer = builder.Configuration["JWT:Issuer"],
+            // Audience
+            ValidateAudience = true,
+            ValidAudience = builder.Configuration["JWT:Audience"],
+            // Durée du vie
+            ValidateLifetime = true,
+            // Signature
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(builder.Configuration["JWT:Secret"])
+            )
+        };
+    });
 
 // La doc Swagger
 // - Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -84,6 +115,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

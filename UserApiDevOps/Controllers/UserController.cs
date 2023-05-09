@@ -5,6 +5,7 @@ using Domain.DTO.User;
 using Domain.Forms.User;
 using Domain.Mappers;
 using Domain.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,6 +13,7 @@ namespace APIUserDevOps.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class UserController : ControllerBase
     {
 
@@ -24,7 +26,21 @@ namespace APIUserDevOps.Controllers
             _JwtHelper = jwtHelper;
         }
 
+        /// <summary>
+        /// UserId obtenu via l'authentification du l'utilisateur (via le JWT Bearer)
+        /// </summary>
+        private int? UserId
+        {
+            get
+            {
+                string? tokenId = User?.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+                return (tokenId is null) ? null : int.Parse(tokenId);
+            }
+        }
+
+
         [HttpGet]
+        [AllowAnonymous] // Déactive l'attirubte [Authorize] de la classe
         [Produces("application/json")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<UserDto>))]
         public ActionResult<IEnumerable<UserDto>> GetAll()
@@ -49,6 +65,7 @@ namespace APIUserDevOps.Controllers
         }
 
         [HttpPost("register")]
+        [AllowAnonymous]
         [Produces("application/json")]
         [Consumes("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserDto))]
@@ -84,14 +101,20 @@ namespace APIUserDevOps.Controllers
         [Consumes("application/json")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult ChangePassword([FromRoute] int id, [FromBody] ChangePasswordForm changePwdForm)
+        public IActionResult ChangePassword([FromBody] ChangePasswordForm changePwdForm)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest();
             }
 
-            if (_userService.ChangePassword(id, changePwdForm.Password))
+            // Check UserId in authentification (by JWT)
+            if (UserId is null)
+            {
+                return Forbid();
+            }
+
+            if (_userService.ChangePassword((int)UserId, changePwdForm.Password))
             {
                 return NoContent();
             }
@@ -100,6 +123,7 @@ namespace APIUserDevOps.Controllers
         }
 
         [HttpPost("login")]
+        [AllowAnonymous]
         [Consumes("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(JwtDto))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -120,7 +144,7 @@ namespace APIUserDevOps.Controllers
                 );
             }
 
-            UserModel? userModel = _userService.GetById((int) userId);
+            UserModel? userModel = _userService.GetById((int)userId);
 
             if (userModel is null)
             {
